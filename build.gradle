@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+}
+
+group 'com.exclamationlabs.connid.sympa'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://artifactory.exclamationlabs.com/artifactory/libs-release-local"
+    }
+
+    maven {
+        url "http://nexus.evolveum.com/nexus/content/repositories/releases/"
+    }
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -14,9 +14,6 @@ public class SoapTest
         {
             SympaSOAP client = new SympaSOAP();
             SympaPort port = client.getSympaPort();
-            String cookie = port.login("sfox@exclamationlabs.com", "Secret1234!");
-            ArrayOfString strings = port.authenticateRemoteAppAndRun("soapTest", "cQe{WYL_Q4T7[;_$", "USER_EMAIL=sfox@exclamationlabs.com", "lists", new ArrayOfString());
-            System.out.println(cookie);
         }
         catch (Exception ex)
         {

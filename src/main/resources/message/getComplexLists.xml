@@ -1,0 +1,12 @@
+<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:sympasoap" xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/">
+    <soapenv:Header/>
+    <soapenv:Body>
+        <urn:authenticateRemoteAppAndRun soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
+            <appname xsi:type="xsd:string">{$AppName}</appname>
+            <apppassword xsi:type="xsd:string">{$appPassword}</apppassword>
+            <vars xsi:type="xsd:string">USER_EMAIL={$listMaster}</vars>
+            <service xsi:type="xsd:string">complexLists</service>
+            <parameters xsi:type="wsdl:ArrayOfString" SOAP-ENC:arrayType="xsd:string[]" xmlns:wsdl="{$DomainWSDL}"/>
+        </urn:authenticateRemoteAppAndRun>
+    </soapenv:Body>
+</soapenv:Envelope>

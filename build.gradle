@@ -16,6 +16,11 @@ repositories {
     }
 }
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+def versionNumber = "${project_version}"
+
 dependencies {
     // Required for MidPoint runtime
     runtimeOnly 'org.codehaus.groovy:groovy:2.5.2'
@@ -28,10 +33,35 @@ dependencies {
     // Jackson components
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    implementation "com.exclamationlabs.connid:connector-base:${base_version}-+"
+
+    testImplementation "com.exclamationlabs.connid:connector-base-test-support:${base_version}-+"
 }
 
-test {
-    useJUnitPlatform()
+task copyDependencyJars(type: Copy) {
+    from configurations.runtimeClasspath.collect {
+        if(it.isFile() && it.getCanonicalFile().getCanonicalPath().endsWith('.jar') &&
+                (!it.getCanonicalFile().getCanonicalPath().contains("connector-framework"))) {
+            it
+        }
+    }
+    into file("custom/lib")
 }
+
+task baseClean(type: Delete) {
+    delete 'custom'
+}
+
+jar {
+    archiveName("${project.name}-${versionNumber}-connector.jar")
+    from 'custom', 'build/classes/java/main', 'src/main/resources'
+
+    manifest {
+        attributes("ConnectorBundle-FrameworkVersion": "1.4.3.11",
+                "ConnectorBundle-Version": versionNumber,
+                "ConnectorBundle-Name": project.name)
+    }
+}
+
+clean.dependsOn('baseClean')
+jar.dependsOn('copyDependencyJars')

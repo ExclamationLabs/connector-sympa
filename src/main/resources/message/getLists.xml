@@ -2,11 +2,11 @@
     <soapenv:Header/>
     <soapenv:Body>
         <urn:authenticateRemoteAppAndRun soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
-            <appname xsi:type="xsd:string">${appName}</appname>
-            <apppassword xsi:type="xsd:string">${appPassword}</apppassword>
-            <vars xsi:type="xsd:string">USER_EMAIL=${listMaster}</vars>
+            <appname xsi:type="xsd:string">${app.name}</appname>
+            <apppassword xsi:type="xsd:string">${app.password}</apppassword>
+            <vars xsi:type="xsd:string">USER_EMAIL=${list.master}</vars>
             <service xsi:type="xsd:string">lists</service>
-            <parameters xsi:type="wsdl:ArrayOfString" SOAP-ENC:arrayType="xsd:string[]" xmlns:wsdl="${DomainWSDL}"/>
+            <parameters xsi:type="wsdl:ArrayOfString" SOAP-ENC:arrayType="xsd:string[]" xmlns:wsdl="${domain.wsdl}"/>
         </urn:authenticateRemoteAppAndRun>
     </soapenv:Body>
 </soapenv:Envelope>

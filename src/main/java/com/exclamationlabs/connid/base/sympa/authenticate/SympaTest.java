@@ -1,19 +1,10 @@
 package com.exclamationlabs.connid.base.sympa.authenticate;
 
-import com.exclamationlabs.connid.base.sympa.Helper.FileHelper;
 import com.exclamationlabs.connid.base.sympa.driver.SympaCore;
-import org.apache.commons.text.StringSubstitutor;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import com.exclamationlabs.connid.base.sympa.model.SympaList;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Properties;
+import java.util.List;
 
 public class SympaTest
 {
@@ -24,11 +15,17 @@ public class SympaTest
         try
         {
             SympaCore sympa = new SympaCore();
-            sympa.getAll();
+            List<SympaList> lists = sympa.getAll();
+            for (SympaList listItem : lists)
+            {
+                System.out.println(listItem);
+            }
+            SympaList aList = sympa.getOne("ethantest");
+            System.out.println(aList);
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
         }
-     }
+    }
 }

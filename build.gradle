@@ -36,6 +36,7 @@ dependencies {
     implementation "com.exclamationlabs.connid:connector-base:${base_version}-+"
 
     testImplementation "com.exclamationlabs.connid:connector-base-test-support:${base_version}-+"
+    testImplementation 'net.tirasa.connid:connector-framework-internal:1.5.0.0'
 }
 
 task copyDependencyJars(type: Copy) {

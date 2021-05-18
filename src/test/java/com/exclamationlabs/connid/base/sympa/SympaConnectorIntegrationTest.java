@@ -79,31 +79,33 @@ public class SympaConnectorIntegrationTest extends IntegrationTest {
         assertNotNull(newId);
         assertNotNull(newId.getUidValue());
     }
+*/
 
     @Test
-    public void test130UsersGet() {
+    public void test130ListsGet() {
         List<String> idValues = new ArrayList<>();
         List<String> nameValues = new ArrayList<>();
         ResultsHandler resultsHandler = ConnectorTestUtils.buildResultsHandler(idValues, nameValues);
 
-        connector.executeQuery(ObjectClass.ACCOUNT, "", resultsHandler, new OperationOptionsBuilder().build());
+        connector.executeQuery(new ObjectClass("List"), "", resultsHandler, new OperationOptionsBuilder().build());
         assertTrue(idValues.size() >= 1);
         assertTrue(StringUtils.isNotBlank(idValues.get(0)));
         assertTrue(StringUtils.isNotBlank(nameValues.get(0)));
     }
 
+
     @Test
-    public void test140UserGet() {
+    public void test140ListGet() {
         List<String> idValues = new ArrayList<>();
         List<String> nameValues = new ArrayList<>();
         ResultsHandler resultsHandler = ConnectorTestUtils.buildResultsHandler(idValues, nameValues);
 
-        connector.executeQuery(ObjectClass.ACCOUNT, generatedUserId, resultsHandler, new OperationOptionsBuilder().build());
+        connector.executeQuery(new ObjectClass("List"), "ethantest", resultsHandler, new OperationOptionsBuilder().build());
         assertEquals(1, idValues.size());
         assertTrue(StringUtils.isNotBlank(idValues.get(0)));
     }
 
-
+  /*
     @Test
     public void test210GroupCreate() {
         Set<Attribute> attributes = new HashSet<>();

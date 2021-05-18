@@ -8,4 +8,7 @@ public enum SympaListAttribute {
     DOMAIN,
     IS_SUBSCRIBER,
     IS_OWNER,
+    DESCRIPTION,
+    TEMPLATE,
+    TOPICS
 }

@@ -1,6 +1,5 @@
 package com.exclamationlabs.connid.base.sympa.model;
 
-import com.exclamationlabs.connid.base.connector.model.IdentityModel;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -13,7 +12,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Item", namespace = "https://github.com/ExclamationLabs/connector-sympa/schema.xsd", propOrder = {})
-public class SympaList implements IdentityModel
+public class SympaCoreList
 {
 
     @JacksonXmlProperty(localName = "homepage")
@@ -59,17 +58,6 @@ public class SympaList implements IdentityModel
         return homePage;
     }
 
-    @Override
-    public String getIdentityIdValue()
-    {
-        return getListAddress();
-    }
-
-    @Override
-    public String getIdentityNameValue()
-    {
-        return getSubject();
-    }
 
     /**
      * Gets the value of the listAddress property.
@@ -174,9 +162,6 @@ public class SympaList implements IdentityModel
     /**
      * Gets the value of the subject property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
      *
      */
     public void setSubject(String subject)
@@ -198,7 +183,7 @@ public class SympaList implements IdentityModel
     @Override
     public String toString()
     {
-        return "SympaList{" +
+        return "SympaCoreList{" +
                 "listAddress='" + listAddress + '\'' +
                 ", homepage='" + homePage + '\'' +
                 ", subject='" + subject + '\'' +

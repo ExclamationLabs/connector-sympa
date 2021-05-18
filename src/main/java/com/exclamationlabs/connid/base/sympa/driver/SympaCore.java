@@ -2,7 +2,8 @@ package com.exclamationlabs.connid.base.sympa.driver;
 
 import com.exclamationlabs.connid.base.sympa.Helper.FileHelper;
 import com.exclamationlabs.connid.base.sympa.Helper.XMLHelper;
-import com.exclamationlabs.connid.base.sympa.model.SympaList;
+import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
+import com.exclamationlabs.connid.base.sympa.model.SympaCoreList;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -100,7 +101,7 @@ public class SympaCore
      * @param parameters Map of name value pairs to be substituted into the template
      * @return The complete message that can be sent to the server
      */
-    public String buildRequestMessage(String templateFile, Map<String, String> parameters)
+    public static String buildRequestMessage(String templateFile, Map<String, String> parameters)
     {
         String message = null;
         try
@@ -116,7 +117,7 @@ public class SympaCore
         return message;
     }
 
-    public String getHttpPostResponse(String message, String url)
+    public static String getHttpPostResponse(String message, String url)
     {
         String responseData = null;
         CloseableHttpClient client = HttpClients.createDefault();
@@ -151,9 +152,9 @@ public class SympaCore
         return responseData;
     }
 
-    public SympaList unMarshalInfo(String xml) throws XMLStreamException
+    public SympaCoreList unMarshalInfo(String xml) throws XMLStreamException
     {
-        SympaList item = null;
+        SympaCoreList item = null;
         XMLStreamReader streamReader = null;
         try
         {
@@ -174,7 +175,7 @@ public class SympaCore
                             String elementName = streamReader.getLocalName();
                             if (elementName != null && elementName.trim().equalsIgnoreCase("item"))
                             {
-                                item = mapper.readValue(streamReader, SympaList.class);
+                                item = mapper.readValue(streamReader, SympaCoreList.class);
                             }
                             streamReader.next();
                             break;
@@ -205,9 +206,9 @@ public class SympaCore
         return item;
     }
 
-    public List<SympaList> unMarshalComplexLists(String xml) throws XMLStreamException
+    public List<SympaCoreList> unMarshalComplexLists(String xml) throws XMLStreamException
     {
-        List<SympaList> list = new ArrayList<SympaList>();
+        List<SympaCoreList> list = new ArrayList<SympaCoreList>();
         XMLStreamReader streamReader = null;
         try
         {
@@ -228,7 +229,7 @@ public class SympaCore
                             String elementName = streamReader.getLocalName();
                             if (elementName != null && elementName.trim().equalsIgnoreCase("item"))
                             {
-                                SympaList item = mapper.readValue(streamReader, SympaList.class);
+                                SympaCoreList item = mapper.readValue(streamReader, SympaCoreList.class);
                                 list.add(item);
                             }
                             streamReader.next();
@@ -309,9 +310,9 @@ public class SympaCore
         return success;
     }
 
-    public List<SympaList> getAll() throws IOException
+    public List<SympaCoreList> getAll() throws IOException
     {
-        List<SympaList> lists = null;
+        List<SympaCoreList> lists = null;
         try
         {
             // Construct Message
@@ -334,9 +335,9 @@ public class SympaCore
         return lists;
     }
 
-    public SympaList getOne(String listName)
+    public SympaCoreList getOne(String listName)
     {
-        SympaList item = null;
+        SympaCoreList item = null;
         try
         {
             // build parameter map for the request

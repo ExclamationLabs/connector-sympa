@@ -10,14 +10,14 @@ import java.util.List;
 public class ArrayOfSympaList
 {
     @XmlElement(name = "item", nillable = true)
-    protected List<SympaList> list;
+    protected List<SharedSympaList> list;
 
-    public List<SympaList> getList()
+    public List<SharedSympaList> getList()
     {
         return list;
     }
 
-    public void setList(List<SympaList> list)
+    public void setList(List<SharedSympaList> list)
     {
         this.list = list;
     }

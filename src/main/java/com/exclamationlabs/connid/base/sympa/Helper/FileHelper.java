@@ -216,6 +216,23 @@ public class FileHelper
         }
         return theProps;
     }
+
+    /**
+     * Loads a resource property file and returns the map interface
+     * @param propertyFileName resource file name
+     * @return map object or null
+     */
+    public static Map<String, String> loadPropertiesFromResourceAsMap(String propertyFileName)
+    {
+        Map<String, String> map = null;
+        Properties properties = loadPropertiesFromResource(propertyFileName);
+        if ( properties != null)
+        {
+            Map intermediate = (Map) properties;
+            map = (Map<String, String>) intermediate;
+        }
+        return map;
+    }
     /**
      * Loads the contents of an input stream into a byte array.
      *

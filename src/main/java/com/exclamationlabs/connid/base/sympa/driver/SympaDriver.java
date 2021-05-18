@@ -5,7 +5,7 @@ import com.exclamationlabs.connid.base.connector.configuration.BaseConnectorConf
 import com.exclamationlabs.connid.base.connector.configuration.ConnectorProperty;
 import com.exclamationlabs.connid.base.connector.driver.BaseDriver;
 import com.exclamationlabs.connid.base.sympa.configuration.SympaConfiguration;
-import com.exclamationlabs.connid.base.sympa.model.SympaList;
+import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
 import java.util.Set;
@@ -16,7 +16,7 @@ public class SympaDriver extends BaseDriver {
 
     public SympaDriver() {
         super();
-        addInvocator(SympaList.class, new SympaListInvocator());
+        addInvocator(SharedSympaList.class, new SympaListInvocator());
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.exclamationlabs.connid.base.sympa.adapter;
 
 import com.exclamationlabs.connid.base.connector.adapter.BaseAdapter;
 import com.exclamationlabs.connid.base.connector.attribute.ConnectorAttribute;
-import com.exclamationlabs.connid.base.sympa.model.SympaList;
+import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 
@@ -15,15 +15,15 @@ import static org.identityconnectors.framework.common.objects.AttributeInfo.Flag
 
 import static com.exclamationlabs.connid.base.sympa.attribute.SympaListAttribute.*;
 
-public class SympaListsAdapter extends BaseAdapter<SympaList> {
+public class SympaListsAdapter extends BaseAdapter<SharedSympaList> {
     @Override
     public ObjectClass getType() {
         return new ObjectClass("List");
     }
 
     @Override
-    public Class<SympaList> getIdentityModelClass() {
-        return SympaList.class;
+    public Class<SharedSympaList> getIdentityModelClass() {
+        return SharedSympaList.class;
     }
 
     @Override
@@ -40,12 +40,12 @@ public class SympaListsAdapter extends BaseAdapter<SympaList> {
     }
 
     @Override
-    protected List<Attribute> constructAttributes(SympaList sympaList) {
+    protected List<Attribute> constructAttributes(SharedSympaList sharedSympaList) {
         return null;
     }
 
     @Override
-    protected SympaList constructModel(Set<Attribute> set, boolean b) {
+    protected SharedSympaList constructModel(Set<Attribute> set, boolean b) {
         return null;
     }
 }

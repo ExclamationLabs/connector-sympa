@@ -167,23 +167,22 @@ public class FileHelper
      * @param propertyFileName the property file name
      * @return java.util.Properties
      */
-    public static Properties loadProperties(String propertyFileName)
+    public static Properties loadProperties(String propertyFileName) throws IOException
     {
         Properties theProps = null;
+        FileInputStream inStream = null;
         try
         {
-            FileInputStream inStream = new FileInputStream(propertyFileName);
+            inStream = new FileInputStream(propertyFileName);
             theProps = new Properties();
             theProps.load(inStream);
-            inStream.close();
         }
-        catch (FileNotFoundException fnfe)
+        finally
         {
-            fnfe.printStackTrace();
-        }
-        catch (IOException ioex )
-        {
-            ioex.printStackTrace();
+            if ( inStream != null )
+            {
+                inStream.close();
+            }
         }
         return theProps;
     }
@@ -195,26 +194,24 @@ public class FileHelper
      *           the property file name
      * @return A java.util.Properties object containing the data
      */
-    public static Properties loadPropertiesFromResource(String propertyFileName)
+    public static Properties loadPropertiesFromResource(String propertyFileName) throws Exception
     {
-        Properties theProps = null;
-
+        Properties properties = null;
+        InputStream in = null;
         try
         {
-            InputStream in = getResourceAsStream(propertyFileName);
-            theProps = new Properties();
-            theProps.load(in);
-            in.close();
+            in = getResourceAsStream(propertyFileName);
+            properties = new Properties();
+            properties.load(in);
         }
-        catch (IOException ioe)
+        finally
         {
-            theProps = null;
+            if ( in != null )
+            {
+                in.close();
+            }
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-        return theProps;
+        return properties;
     }
 
     /**
@@ -222,9 +219,10 @@ public class FileHelper
      * @param propertyFileName resource file name
      * @return map object or null
      */
-    public static Map<String, String> loadPropertiesFromResourceAsMap(String propertyFileName)
+    public static Map<String, String> loadPropertiesFromResourceAsMap(String propertyFileName) throws Exception
     {
         Map<String, String> map = null;
+
         Properties properties = loadPropertiesFromResource(propertyFileName);
         if ( properties != null)
         {

@@ -11,10 +11,12 @@ import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import java.util.Set;
 
 public class SympaDriver extends BaseDriver {
+    private SympaCore sympaCore;
 
     private SympaConfiguration sympaConfiguration;
 
-    public SympaDriver() {
+    public SympaDriver()
+    {
         super();
         addInvocator(SharedSympaList.class, new SympaListInvocator());
     }
@@ -25,8 +27,10 @@ public class SympaDriver extends BaseDriver {
     }
 
     @Override
-    public void initialize(BaseConnectorConfiguration baseConnectorConfiguration, Authenticator authenticator) throws ConnectorException {
+    public void initialize(BaseConnectorConfiguration baseConnectorConfiguration, Authenticator authenticator) throws ConnectorException
+    {
         sympaConfiguration = (SympaConfiguration) baseConnectorConfiguration;
+        sympaCore = new SympaCore(sympaConfiguration.getSympaPropertyMap());
     }
 
     @Override

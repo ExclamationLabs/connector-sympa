@@ -9,10 +9,10 @@ import java.util.*;
 @ConfigurationClass(skipUnsupported = true)
 public class SympaConfiguration extends BaseConnectorConfiguration {
 
-    public static final String APP_NAME = "appName";
-    public static final String APP_PASSWORD = "appPassword";
-    public static final String LIST_MASTER = "listMaster";
-    public static final String DOMAIN_WSDL = "DomainWSDL";
+    public static final String APP_NAME = "app.name";
+    public static final String APP_PASSWORD = "app.password";
+    public static final String LIST_MASTER = "list.master";
+    public static final String DOMAIN_WSDL = "sympa.domain.wsdl";
     public static final String SYMPA_DOMAIN_URL = "sympa.domain.url";
 
     public SympaConfiguration() {

@@ -10,9 +10,9 @@ import org.identityconnectors.framework.common.exceptions.ConnectorException;
 
 import java.util.Set;
 
-public class SympaDriver extends BaseDriver {
+public class SympaDriver extends BaseDriver
+{
     private SympaCore sympaCore;
-
     private SympaConfiguration sympaConfiguration;
 
     public SympaDriver()
@@ -22,8 +22,25 @@ public class SympaDriver extends BaseDriver {
     }
 
     @Override
-    public Set<ConnectorProperty> getRequiredPropertyNames() {
+    public void close()
+    {
+
+    }
+
+    @Override
+    public Set<ConnectorProperty> getRequiredPropertyNames()
+    {
         return null;
+    }
+
+    SympaConfiguration getSympaConfiguration()
+    {
+        return sympaConfiguration;
+    }
+
+    public SympaCore getSympaCore()
+    {
+        return sympaCore;
     }
 
     @Override
@@ -33,17 +50,14 @@ public class SympaDriver extends BaseDriver {
         sympaCore = new SympaCore(sympaConfiguration.getSympaPropertyMap());
     }
 
-    @Override
-    public void test() throws ConnectorException {
-
+    public void setSympaCore(SympaCore sympaCore)
+    {
+        this.sympaCore = sympaCore;
     }
 
     @Override
-    public void close() {
+    public void test() throws ConnectorException
+    {
 
-    }
-
-    SympaConfiguration getSympaConfiguration() {
-        return sympaConfiguration;
     }
 }

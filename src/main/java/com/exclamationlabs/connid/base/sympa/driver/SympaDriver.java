@@ -7,6 +7,7 @@ import com.exclamationlabs.connid.base.connector.driver.BaseDriver;
 import com.exclamationlabs.connid.base.sympa.configuration.SympaConfiguration;
 import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
+import org.identityconnectors.framework.common.exceptions.UnknownUidException;
 
 import java.util.Set;
 
@@ -58,6 +59,11 @@ public class SympaDriver extends BaseDriver
     @Override
     public void test() throws ConnectorException
     {
-        sympaCore.getOne("dummyList");
+        // Test basic connectivity to Sympa by trying to get a dummy list that doesn't exist
+        try {
+            getSympaCore().getOne("dummyList");
+        } catch (UnknownUidException unk) {
+            // expected exception - there should be no dummyList
+        }
     }
 }

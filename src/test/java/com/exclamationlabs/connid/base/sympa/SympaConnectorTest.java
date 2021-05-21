@@ -44,6 +44,7 @@ public class SympaConnectorTest {
         connector = new SympaConnector() {
             @Override
             public void init(Configuration configuration) {
+
                 setAuthenticator(null);
                 setDriver(new SympaDriver() {
                     @Override

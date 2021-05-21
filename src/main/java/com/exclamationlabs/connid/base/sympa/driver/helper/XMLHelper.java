@@ -1,4 +1,4 @@
-package com.exclamationlabs.connid.base.sympa.Helper;
+package com.exclamationlabs.connid.base.sympa.driver.helper;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 

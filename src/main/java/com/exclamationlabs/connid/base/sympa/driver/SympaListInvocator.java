@@ -5,6 +5,7 @@ import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
 import com.exclamationlabs.connid.base.sympa.model.SympaCoreList;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
+import org.identityconnectors.framework.common.exceptions.UnknownUidException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
     public String create(SympaDriver sympaDriver, SharedSympaList sharedSympaList) throws ConnectorException
     {
         String listAddress = null;
-        SympaCoreList list = null;
+        SympaCoreList list;
         SympaCore sympaCore = sympaDriver.getSympaCore();
         Boolean result = sympaCore.create(
                 sharedSympaList.getListName(),
@@ -129,13 +130,17 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
         SympaCore sympaCore = sympaDriver.getSympaCore();
         if ( sympaCore != null && listAddress != null && listAddress.trim().length() > 0 )
         {
-            SympaCoreList coreList = sympaCore.getOne(listAddress);
-            if ( coreList != null )
-            {
-                sharedList = new SharedSympaList();
-                sharedList.setSubject(coreList.getSubject());
-                sharedList.setHomePage(coreList.getHomePage());
-                sharedList.setListAddress(coreList.getListAddress());
+            try {
+                SympaCoreList coreList = sympaCore.getOne(listAddress);
+                if ( coreList != null )
+                {
+                    sharedList = new SharedSympaList();
+                    sharedList.setSubject(coreList.getSubject());
+                    sharedList.setHomePage(coreList.getHomePage());
+                    sharedList.setListAddress(coreList.getListAddress());
+                }
+            } catch (UnknownUidException unk) {
+                return null;
             }
         }
         else

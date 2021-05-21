@@ -1,4 +1,4 @@
-package com.exclamationlabs.connid.base.sympa.Helper;
+package com.exclamationlabs.connid.base.sympa.driver.helper;
 
 
 import java.io.*;

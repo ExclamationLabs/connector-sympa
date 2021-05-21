@@ -159,19 +159,14 @@ public class SympaCore
      * @param parameters   Map of name value pairs to be substituted into the template
      * @return The complete message that can be sent to the server
      */
-    public static String buildRequestMessage(String templateFile, Map<String, String> parameters)
+    public static String buildRequestMessage(String templateFile, Map<String, String> parameters) throws IOException
     {
         String message = null;
-        try
-        {
-            message = FileHelper.loadResourceToString(templateFile, StandardCharsets.UTF_8);
-            StringSubstitutor substitutor = new StringSubstitutor(parameters);
-            message = substitutor.replace(message);
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+
+        message = FileHelper.loadResourceToString(templateFile, StandardCharsets.UTF_8);
+        StringSubstitutor substitutor = new StringSubstitutor(parameters);
+        message = substitutor.replace(message);
+
         return message;
     }
 
@@ -181,36 +176,35 @@ public class SympaCore
      * @param url The HTTP URL of the server that will receive the POST request
      * @return The body of the response
      */
-    public static String getHttpPostResponse(String message, String url)
+    public static String getHttpPostResponse(String message, String url) throws IOException
     {
         String responseData = null;
-        CloseableHttpClient client = HttpClients.createDefault();
+        CloseableHttpResponse response = null;
+        CloseableHttpClient client = null;
         try
         {
+            client = HttpClients.createDefault();
             HttpPost post = new HttpPost(url);
             StringEntity requestData = new StringEntity(message);
             post.setEntity(requestData);
             post.setHeader("Content-Type", "text/xml;charset=UTF-8");
-            CloseableHttpResponse response = client.execute(post);
+            response = client.execute(post);
             if (response != null)
             {
                 int status = response.getStatusLine().getStatusCode();
                 responseData = EntityUtils.toString(response.getEntity());
-                response.close();
             }
         }
-        catch (IOException exception)
+        finally
         {
-            LOG.error(exception, "Failed to get response from URL: {0}", url);
-        }
-
-        try
-        {
-            client.close();
-        }
-        catch (Exception e)
-        {
-            LOG.warn(e, "Failed to close http client: {0}", e.getMessage());
+            if ( response != null )
+            {
+                response.close();
+            }
+            if ( client != null )
+            {
+                client.close();
+            }
         }
 
         return responseData;
@@ -248,6 +242,7 @@ public class SympaCore
             catch (Exception exception)
             {
                 LOG.warn(exception, "Failed to close Sympa list {0}", listName);
+                throw new ConnectorException(exception);
             }
             // Analyse the response and log the results
             if ( response != null )
@@ -257,6 +252,10 @@ public class SympaCore
                 {
                     SympaFault fault = (SympaFault) obj;
                     LOG.warn("Failed to close Sympa list {0}. Fault Name: {1}. Fault Detail: {2}.", listName, fault.getName(), fault.getDetail());
+                    if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
+                    {
+                        throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
+                    }
                 }
                 obj = response.get(SympaCore.sympaResult);
                 if ( obj !=  null )
@@ -316,7 +315,11 @@ public class SympaCore
                 {
                     SympaFault fault = (SympaFault) obj;
                     LOG.warn("Failed to create Sympa list {0}. Fault Name: {1}. Fault Detail: {2}.", listName, fault.getName(), fault.getDetail());
-                    processFault(listName, fault);
+
+                    if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
+                    {
+                        throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
+                    }
                 }
                 obj = response.get(SympaCore.sympaResult);
                 if ( obj !=  null )
@@ -420,6 +423,11 @@ public class SympaCore
                     if ( obj != null && obj instanceof SympaFault)
                     {
                         SympaFault fault = (SympaFault) obj;
+                        LOG.warn("Failed to Retrieve Info for Sympa List. {0} on server {1}", fault.getDetail(), config.get(domainURL));
+                        if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
+                        {
+                            throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
+                        }
                         LOG.warn("Failed to Retrieve Info for Sympa List. {0}", fault.getDetail());
                         processFault(listName, fault);
                     }
@@ -545,12 +553,12 @@ public class SympaCore
             }
             else
             {
-                System.out.println("WARNING: No Data");
+                LOG.warn("No Data to parse");
             }
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            LOG.warn(e, e.getMessage(), new Object[0]);
         }
         finally
         {
@@ -662,12 +670,12 @@ public class SympaCore
             }
             else
             {
-                System.out.println("WARNING: No Data");
+                LOG.warn("No data to parse");
             }
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            LOG.warn(e, e.getMessage(), new Object[0]);
         }
         finally
         {
@@ -744,7 +752,7 @@ public class SympaCore
     private static void processFault(String listName, SympaFault fault) throws ConnectorException {
         if (StringUtils.containsIgnoreCase(fault.getDetail(), "list already exists")) {
             throw new AlreadyExistsException("Sympa list " + listName + " already exists");
-        } else if (StringUtils.containsIgnoreCase(fault.getDetail(), "Authentication failed")) {
+        } else if (StringUtils.containsIgnoreCase(fault.getName(), "Authentication failed")) {
             throw new ConnectorSecurityException("Sympa authentication failed: " + fault.toString());
         } else {
             throw new ConnectorException("SympaFault encountered: " + fault.toString());

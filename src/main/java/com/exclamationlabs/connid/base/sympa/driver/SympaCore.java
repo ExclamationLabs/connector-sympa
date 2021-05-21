@@ -5,6 +5,7 @@ import com.exclamationlabs.connid.base.sympa.Helper.XMLHelper;
 import com.exclamationlabs.connid.base.sympa.model.SympaCoreList;
 import com.exclamationlabs.connid.base.sympa.model.SympaFault;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -13,7 +14,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.identityconnectors.common.logging.Log;
+import org.identityconnectors.framework.common.exceptions.AlreadyExistsException;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
+import org.identityconnectors.framework.common.exceptions.ConnectorSecurityException;
 import org.identityconnectors.framework.spi.Connector;
 
 import javax.xml.stream.XMLInputFactory;
@@ -313,6 +316,7 @@ public class SympaCore
                 {
                     SympaFault fault = (SympaFault) obj;
                     LOG.warn("Failed to create Sympa list {0}. Fault Name: {1}. Fault Detail: {2}.", listName, fault.getName(), fault.getDetail());
+                    processFault(listName, fault);
                 }
                 obj = response.get(SympaCore.sympaResult);
                 if ( obj !=  null )
@@ -417,6 +421,7 @@ public class SympaCore
                     {
                         SympaFault fault = (SympaFault) obj;
                         LOG.warn("Failed to Retrieve Info for Sympa List. {0}", fault.getDetail());
+                        processFault(listName, fault);
                     }
                 }
             }
@@ -734,5 +739,15 @@ public class SympaCore
             }
         }
         return response;
+    }
+
+    private static void processFault(String listName, SympaFault fault) throws ConnectorException {
+        if (StringUtils.containsIgnoreCase(fault.getDetail(), "list already exists")) {
+            throw new AlreadyExistsException("Sympa list " + listName + " already exists");
+        } else if (StringUtils.containsIgnoreCase(fault.getDetail(), "Authentication failed")) {
+            throw new ConnectorSecurityException("Sympa authentication failed: " + fault.toString());
+        } else {
+            throw new ConnectorException("SympaFault encountered: " + fault.toString());
+        }
     }
 }

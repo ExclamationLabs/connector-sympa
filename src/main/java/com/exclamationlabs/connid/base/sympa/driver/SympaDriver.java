@@ -58,6 +58,6 @@ public class SympaDriver extends BaseDriver
     @Override
     public void test() throws ConnectorException
     {
-
+        sympaCore.getOne("dummyList");
     }
 }

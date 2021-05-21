@@ -52,4 +52,9 @@ public class SympaFault
     {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "code: " + code + "; name: " + name + "; detail: " + detail;
+    }
 }

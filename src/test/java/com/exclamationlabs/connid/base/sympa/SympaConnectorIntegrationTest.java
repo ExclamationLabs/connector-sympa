@@ -6,6 +6,7 @@ import com.exclamationlabs.connid.base.connector.test.util.ConnectorTestUtils;
 import com.exclamationlabs.connid.base.sympa.attribute.SympaListAttribute;
 import com.exclamationlabs.connid.base.sympa.configuration.SympaConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.identityconnectors.framework.common.exceptions.AlreadyExistsException;
 import org.identityconnectors.framework.common.objects.*;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -59,31 +60,28 @@ public class SympaConnectorIntegrationTest extends IntegrationTest {
         generatedListAddress = newId.getUidValue();
     }
 
-      /*
     @Test(expected=AlreadyExistsException.class)
     public void test110UserCreateAlreadyExists() {
         Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(DocuSignUserAttribute.USER_NAME.name()).addValue("Gonzo Test").build());
-        attributes.add(new AttributeBuilder().setName(DocuSignUserAttribute.EMAIL.name()).addValue("gonzo@test.com").build());
-        attributes.add(new AttributeBuilder().setName(DocuSignUserAttribute.FIRST_NAME.name()).addValue("Gonzo").build());
-        attributes.add(new AttributeBuilder().setName(DocuSignUserAttribute.LAST_NAME.name()).addValue("Test").build());
+        attributes.add(new AttributeBuilder().setName(SympaListAttribute.SUBJECT.name()).addValue("Test Subject").build());
+        attributes.add(new AttributeBuilder().setName(SympaListAttribute.LIST_NAME.name()).addValue(TEST_LIST_NAME).build());
+        attributes.add(new AttributeBuilder().setName(SympaListAttribute.TEMPLATE.name()).addValue("icp-public").build());
+        attributes.add(new AttributeBuilder().setName(SympaListAttribute.DESCRIPTION.name()).addValue("Test SympaList creation").build());
+        attributes.add(new AttributeBuilder().setName(SympaListAttribute.TOPICS.name()).addValue("computing,science").build());
 
-        Uid newId = connector.create(ObjectClass.ACCOUNT, attributes, new OperationOptionsBuilder().build());
-        assertNotNull(newId);
-        assertNotNull(newId.getUidValue());
-        generatedUserId = newId.getUidValue();
+        connector.create(new ObjectClass("List"), attributes, new OperationOptionsBuilder().build());
     }
 
     @Test
     public void test120UserModify() {
+        // NOTE: Sympa update is a no-op, but should still be allowed without failure
         Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(DocuSignUserAttribute.LAST_NAME.name()).addValue("Bonzzo").build());
+        attributes.add(new AttributeBuilder().setName(SympaListAttribute.SUBJECT.name()).addValue("Modified Subject").build());
 
-        Uid newId = connector.update(ObjectClass.ACCOUNT, new Uid(generatedUserId), attributes, new OperationOptionsBuilder().build());
+        Uid newId = connector.update(new ObjectClass("List"), new Uid(TEST_LIST_NAME), attributes, new OperationOptionsBuilder().build());
         assertNotNull(newId);
         assertNotNull(newId.getUidValue());
     }
-*/
 
     @Test
     public void test130ListsGet() {

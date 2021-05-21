@@ -1,7 +1,7 @@
 package com.exclamationlabs.connid.base.sympa.driver;
 
-import com.exclamationlabs.connid.base.sympa.Helper.FileHelper;
-import com.exclamationlabs.connid.base.sympa.Helper.XMLHelper;
+import com.exclamationlabs.connid.base.sympa.driver.helper.FileHelper;
+import com.exclamationlabs.connid.base.sympa.driver.helper.XMLHelper;
 import com.exclamationlabs.connid.base.sympa.model.SympaCoreList;
 import com.exclamationlabs.connid.base.sympa.model.SympaFault;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
@@ -17,7 +17,7 @@ import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.AlreadyExistsException;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.exceptions.ConnectorSecurityException;
-import org.identityconnectors.framework.spi.Connector;
+import org.identityconnectors.framework.common.exceptions.UnknownUidException;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
@@ -45,6 +45,7 @@ public class SympaCore
     private static final String sympaFault = "Fault";
     private static final String sympaResult = "Result";
     private static final String sympaItem = "item";
+    private static final String sympaList = "list";
     private Map<String, String> config = null;
     private Map<String, String> nameSpace = null;
     private boolean canExecute = false;
@@ -247,17 +248,8 @@ public class SympaCore
             // Analyse the response and log the results
             if ( response != null )
             {
-                Object obj = response.get(SympaCore.sympaFault);
-                if ( obj != null && obj instanceof SympaFault)
-                {
-                    SympaFault fault = (SympaFault) obj;
-                    LOG.warn("Failed to close Sympa list {0}. Fault Name: {1}. Fault Detail: {2}.", listName, fault.getName(), fault.getDetail());
-                    if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
-                    {
-                        throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
-                    }
-                }
-                obj = response.get(SympaCore.sympaResult);
+                processFault("close", listName, response);
+                Object obj = response.get(SympaCore.sympaResult);
                 if ( obj !=  null )
                 {
                     String result = obj.toString();
@@ -280,14 +272,13 @@ public class SympaCore
     public Boolean create(String listName, String subject, String templateName, String description, String topics)
     {
         Boolean success = new Boolean(false);
-        Map<String, Object> response = null;
+        Map<String, Object> response;
         if ( canExecute )
         {
             try
             {
                 // Setup Parameters
-                HashMap<String, String> parameters = new HashMap<String, String>();
-                parameters.putAll(config);
+                HashMap<String, String> parameters = new HashMap<>(config);
                 parameters.put(SympaCore.listName, listName);
                 parameters.put(SympaCore.listSubject, subject);
                 parameters.put(SympaCore.listTemplate, templateName);
@@ -310,18 +301,9 @@ public class SympaCore
             // Analyse the response and log the results
             if ( response != null )
             {
-                Object obj = response.get(SympaCore.sympaFault);
-                if ( obj != null && obj instanceof SympaFault)
-                {
-                    SympaFault fault = (SympaFault) obj;
-                    LOG.warn("Failed to create Sympa list {0}. Fault Name: {1}. Fault Detail: {2}.", listName, fault.getName(), fault.getDetail());
+                processFault("create", listName, response);
 
-                    if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
-                    {
-                        throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
-                    }
-                }
-                obj = response.get(SympaCore.sympaResult);
+                Object obj = response.get(SympaCore.sympaResult);
                 if ( obj !=  null )
                 {
                     String result = obj.toString();
@@ -354,12 +336,18 @@ public class SympaCore
                 // Send Request and receive response
                 String responseData = getHttpPostResponse(message, config.get(domainURL));
 
+                // Look for fault
+                Map<String, Object> responseCheck = unMarshalInfoResponse(responseData);
+                processFault("getAll", null, responseCheck);
+
                 // Re Wrap the Response Data
                 String unwrapped = XMLHelper.unWrap("item", responseData);
                 String xml = XMLHelper.wrap("ListInfo", nameSpace, unwrapped);
 
                 // Unmarshal the XML tree to list of SympaCoreList
-                lists = unMarshalComplexLists(xml);
+                Map<String, Object> response = unMarshalComplexLists(xml);
+                processFault("getAll", null, response);
+                lists = (List) response.get(SympaCore.sympaList);
                 if ( lists != null && lists.size() > 0 )
                 {
                     LOG.info("Sympa getComplexLists success on server {0}", config.get(domainURL));
@@ -373,7 +361,7 @@ public class SympaCore
         }
         else
         {
-            LOG.error("Cannot retrieve Sympa lists. Global Configuration is invalid or incomplete", new Object[0]);
+            LOG.error("Cannot retrieve Sympa lists. Global Configuration is invalid or incomplete");
             throw new ConnectorException("Global configuration is invalid or incomplete");
         }
         return lists;
@@ -382,14 +370,13 @@ public class SympaCore
     public SympaCoreList getOne(String listName) throws ConnectorException
     {
         SympaCoreList item = null;
-        Map<String, Object> response = null;
+        Map<String, Object> response;
         if ( canExecute )
         {
             try
             {
                 // build parameter map for the request
-                HashMap<String, String> parameters = new HashMap<String, String>();
-                parameters.putAll(config);
+                HashMap<String, String> parameters = new HashMap<>(config);
                 parameters.put(SympaCore.listName, listName);
 
                 // Construct Request Message
@@ -419,18 +406,7 @@ public class SympaCore
                 }
                 else if ( response.containsKey(SympaCore.sympaFault))
                 {
-                    Object obj = response.get(SympaCore.sympaFault);
-                    if ( obj != null && obj instanceof SympaFault)
-                    {
-                        SympaFault fault = (SympaFault) obj;
-                        LOG.warn("Failed to Retrieve Info for Sympa List. {0} on server {1}", fault.getDetail(), config.get(domainURL));
-                        if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
-                        {
-                            throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
-                        }
-                        LOG.warn("Failed to Retrieve Info for Sympa List. {0}", fault.getDetail());
-                        processFault(listName, fault);
-                    }
+                    processFault("getOne", listName, response);
                 }
             }
         }
@@ -511,10 +487,10 @@ public class SympaCore
 
     public Map<String, Object> unMarshalCloseResponse(String xml) throws XMLStreamException
     {
-        SympaFault item = null;
-        String result = null;
+        SympaFault item;
+        String result;
         XMLStreamReader streamReader = null;
-        HashMap<String, Object> data = new HashMap<String, Object>();
+        HashMap<String, Object> data = new HashMap<>();
         try
         {
             if (xml != null && xml.trim().length() > 0)
@@ -558,7 +534,7 @@ public class SympaCore
         }
         catch (Exception e)
         {
-            LOG.warn(e, e.getMessage(), new Object[0]);
+            LOG.warn(e, e.getMessage());
         }
         finally
         {
@@ -573,10 +549,10 @@ public class SympaCore
 
     public Map<String, Object> unMarshalCreateResponse(String xml) throws XMLStreamException
     {
-        String result = null;
-        SympaFault fault = null;
+        String result;
+        SympaFault fault;
         XMLStreamReader streamReader = null;
-        HashMap<String, Object> response = new HashMap<String, Object>();
+        HashMap<String, Object> response = new HashMap<>();
         try
         {
             if (xml != null && xml.trim().length() > 0)
@@ -615,12 +591,12 @@ public class SympaCore
             }
             else
             {
-                LOG.info("No Data to parse", new Object[0]);
+                LOG.info("No Data to parse");
             }
         }
         catch (Exception exception)
         {
-            LOG.error(exception, "Unable to unmarshal response", new Object[0]);
+            LOG.error(exception, "Unable to unmarshal response");
         }
         finally
         {
@@ -633,10 +609,11 @@ public class SympaCore
         return response;
     }
 
-    public List<SympaCoreList> unMarshalComplexLists(String xml) throws XMLStreamException
+    public HashMap<String, Object> unMarshalComplexLists(String xml) throws XMLStreamException
     {
-        List<SympaCoreList> list = new ArrayList<SympaCoreList>();
+        List<SympaCoreList> list = new ArrayList<>();
         XMLStreamReader streamReader = null;
+        HashMap<String, Object> response = new HashMap<>();
         try
         {
             if (xml != null && xml.trim().length() > 0)
@@ -675,7 +652,7 @@ public class SympaCore
         }
         catch (Exception e)
         {
-            LOG.warn(e, e.getMessage(), new Object[0]);
+            LOG.warn(e, e.getMessage());
         }
         finally
         {
@@ -685,15 +662,18 @@ public class SympaCore
             }
         }
 
-        return list;
+        if (!list.isEmpty()) {
+            response.put(SympaCore.sympaList, list);
+        }
+        return response;
     }
 
     public HashMap<String, Object> unMarshalInfoResponse(String xml) throws XMLStreamException
     {
-        SympaCoreList item = null;
-        SympaFault fault = null;
+        SympaCoreList item;
+        SympaFault fault;
         XMLStreamReader streamReader = null;
-        HashMap<String, Object> response = new HashMap<String, Object>();
+        HashMap<String, Object> response = new HashMap<>();
         try
         {
             if (xml != null && xml.trim().length() > 0)
@@ -732,12 +712,12 @@ public class SympaCore
             }
             else
             {
-                LOG.warn("unMarshalInfo: No Data to parse", new Object[0]);
+                LOG.warn("unMarshalInfo: No Data to parse");
             }
         }
         catch (Exception e)
         {
-            LOG.warn(e, e.getMessage(), new Object[0]);
+            LOG.warn(e, e.getMessage());
         }
         finally
         {
@@ -749,13 +729,31 @@ public class SympaCore
         return response;
     }
 
-    private static void processFault(String listName, SympaFault fault) throws ConnectorException {
+    private void processFault(String request, String listName, Map<String, Object> responseData) throws ConnectorException {
+        Object obj = responseData.get(SympaCore.sympaFault);
+        if (obj instanceof SympaFault) {
+            SympaFault fault = (SympaFault) obj;
+            if (listName != null) {
+                LOG.warn("Failed to complete Sympa request {0} for list {1}. Fault info: {2}.",
+                        request, listName, fault.toString());
+            } else {
+                LOG.warn("Failed to complete Sympa request {0}. Fault info: {1}.",
+                        request, fault.toString());
+            }
+            processFault(request, listName, fault);
+        }
+    }
+
+    private void processFault(String request, String listName, SympaFault fault) throws ConnectorException {
         if (StringUtils.containsIgnoreCase(fault.getDetail(), "list already exists")) {
             throw new AlreadyExistsException("Sympa list " + listName + " already exists");
         } else if (StringUtils.containsIgnoreCase(fault.getName(), "Authentication failed")) {
-            throw new ConnectorSecurityException("Sympa authentication failed: " + fault.toString());
+            throw new ConnectorSecurityException("Sympa authentication failed for " +  request + ": " + fault.toString() +
+                    " On Server " + config.get(domainURL));
+        } else if (StringUtils.containsIgnoreCase(fault.getName(), "unknown")) {
+            throw new UnknownUidException("Sympa list " + listName + " not found");
         } else {
-            throw new ConnectorException("SympaFault encountered: " + fault.toString());
+            throw new ConnectorException("SympaFault encountered during " + request + ": " + fault.toString());
         }
     }
 }

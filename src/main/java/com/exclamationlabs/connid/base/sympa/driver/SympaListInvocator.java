@@ -51,6 +51,7 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
     /**
      * Requests an update of the specified Sympa list.
      * The connector does not change the configuration of the Sympa list.
+     * Effectively, there is no update capability of a Sympa list, so this is a no-op.
      * @param sympaDriver The driver contains the SympaCore object and its configuration
      * @param s
      * @param sharedSympaList contains the listname or the list address.
@@ -59,21 +60,6 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
     @Override
     public void update(SympaDriver sympaDriver, String s, SharedSympaList sharedSympaList) throws ConnectorException
     {
-        SympaCoreList list = null;
-        SympaCore sympaCore = sympaDriver.getSympaCore();
-        if ( sharedSympaList != null
-                && sharedSympaList.getListName() != null
-                && sharedSympaList.getListName().trim().length() > 0
-                && sympaCore != null )
-        {
-            list = sympaCore.getOne(sharedSympaList.getListName());
-            if ( list != null )
-            {
-                sharedSympaList.setListAddress(list.getListAddress());
-                sharedSympaList.setHomePage(list.getHomePage());
-                sharedSympaList.setSubject(list.getSubject());
-            }
-        }
     }
 
     /**

@@ -35,6 +35,10 @@ public class SympaCoreList
     @XmlElement(name = "isOwner")
     private Boolean owner;
 
+    @JacksonXmlProperty(localName = "isEditor")
+    @XmlElement(name = "isEditor")
+    private Boolean editor;
+
     private String listName;
 
     private String domain;
@@ -157,6 +161,10 @@ public class SympaCoreList
     public void setOwner(Boolean owner)
     {
         this.owner = owner;
+    }
+
+    public void setEditor(Boolean editor) {
+        //this.editor = editor;
     }
 
     /**

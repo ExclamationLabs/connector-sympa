@@ -110,7 +110,7 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
             if ( lists != null && lists.size() > 0 )
             {
                 SharedSympaList sharedList = null;
-                sharedLists = new ArrayList<SharedSympaList>();
+                sharedLists = new ArrayList<>();
                 for (SympaCoreList coreList: lists )
                 {
                     sharedList = new SharedSympaList();
@@ -125,7 +125,7 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
         {
             LOG.warn("Invalid Request. SympaCore unavailable", new Object());
         }
-        return null;
+        return sharedLists;
     }
 
     /**

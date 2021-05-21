@@ -14,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
+import org.identityconnectors.framework.common.exceptions.ConnectorSecurityException;
 import org.identityconnectors.framework.spi.Connector;
 
 import javax.xml.stream.XMLInputFactory;
@@ -249,6 +250,10 @@ public class SympaCore
                 {
                     SympaFault fault = (SympaFault) obj;
                     LOG.warn("Failed to close Sympa list {0}. Fault Name: {1}. Fault Detail: {2}.", listName, fault.getName(), fault.getDetail());
+                    if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
+                    {
+                        throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
+                    }
                 }
                 obj = response.get(SympaCore.sympaResult);
                 if ( obj !=  null )
@@ -308,6 +313,10 @@ public class SympaCore
                 {
                     SympaFault fault = (SympaFault) obj;
                     LOG.warn("Failed to create Sympa list {0}. Fault Name: {1}. Fault Detail: {2}.", listName, fault.getName(), fault.getDetail());
+                    if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
+                    {
+                        throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
+                    }
                 }
                 obj = response.get(SympaCore.sympaResult);
                 if ( obj !=  null )
@@ -411,7 +420,11 @@ public class SympaCore
                     if ( obj != null && obj instanceof SympaFault)
                     {
                         SympaFault fault = (SympaFault) obj;
-                        LOG.warn("Failed to Retrieve Info for Sympa List. {0}", fault.getDetail());
+                        LOG.warn("Failed to Retrieve Info for Sympa List. {0} on server {1}", fault.getDetail(), config.get(domainURL));
+                        if ( fault.getName() != null && fault.getName().trim().equalsIgnoreCase("Authentication failed"))
+                        {
+                            throw new ConnectorSecurityException(fault.getDetail() + " On Server " + config.get(domainURL));
+                        }
                     }
                 }
             }

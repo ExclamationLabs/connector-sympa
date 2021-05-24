@@ -3,6 +3,7 @@ package com.exclamationlabs.connid.base.sympa.driver;
 import com.exclamationlabs.connid.base.connector.authenticator.Authenticator;
 import com.exclamationlabs.connid.base.connector.configuration.BaseConnectorConfiguration;
 import com.exclamationlabs.connid.base.connector.configuration.ConnectorProperty;
+import com.exclamationlabs.connid.base.connector.configuration.TrustStoreConfiguration;
 import com.exclamationlabs.connid.base.connector.driver.BaseDriver;
 import com.exclamationlabs.connid.base.sympa.configuration.SympaConfiguration;
 import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
@@ -47,6 +48,7 @@ public class SympaDriver extends BaseDriver
     @Override
     public void initialize(BaseConnectorConfiguration baseConnectorConfiguration, Authenticator authenticator) throws ConnectorException
     {
+        TrustStoreConfiguration.clearJdkProperties();
         sympaConfiguration = (SympaConfiguration) baseConnectorConfiguration;
         sympaCore = new SympaCore(sympaConfiguration.getSympaPropertyMap());
     }

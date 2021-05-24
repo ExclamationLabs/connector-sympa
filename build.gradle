@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+}
+
+group 'com.exclamationlabs.connid.base.sympa'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://artifactory.exclamationlabs.com/artifactory/libs-release-local"
+    }
+
+    maven {
+        url "https://nexus.evolveum.com/nexus/content/repositories/releases/"
+    }
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+def versionNumber = "${project_version}"
+
+dependencies {
+    // Required for MidPoint runtime
+    runtimeOnly 'org.codehaus.groovy:groovy:2.5.2'
+    runtimeOnly 'com.evolveum.polygon:connector-common:1.5.0.0'
+
+    // apache components
+    //implementation 'org.apache.commons:commons-io:2.8.0'
+    implementation 'org.apache.commons:commons-text:1.9'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    // Jackson components
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.3'
+
+    implementation "com.exclamationlabs.connid:connector-base:${base_version}-+"
+
+    testImplementation "com.exclamationlabs.connid:connector-base-test-support:${base_version}-+"
+    testImplementation 'net.tirasa.connid:connector-framework-internal:1.5.0.0'
+}
+
+task copyDependencyJars(type: Copy) {
+    from configurations.runtimeClasspath.collect {
+        if(it.isFile() && it.getCanonicalFile().getCanonicalPath().endsWith('.jar') &&
+                (!it.getCanonicalFile().getCanonicalPath().contains("connector-framework"))) {
+            it
+        }
+    }
+    into file("custom/lib")
+}
+
+task baseClean(type: Delete) {
+    delete 'custom'
+}
+
+jar {
+    archiveName("${project.name}-${versionNumber}-connector.jar")
+    from 'custom', 'build/classes/java/main', 'src/main/resources'
+
+    manifest {
+        attributes("ConnectorBundle-FrameworkVersion": "1.4.3.11",
+                "ConnectorBundle-Version": versionNumber,
+                "ConnectorBundle-Name": project.name)
+    }
+}
+
+clean.dependsOn('baseClean')
+jar.dependsOn('copyDependencyJars')

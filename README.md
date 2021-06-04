@@ -38,7 +38,7 @@ following operations:
 - Within Midpoint create a resource type definition for each Sympa Instance you want to control. Each instance will need its onw resource configuration file. Make sure to set the fully qualified file location of the configuration file.
 
 
-##Configuration Properties
+## Configuration Properties
 
 The midpoint IAM must supply the following configuration properties for the connector to operate. No value can be blank or null.
 See https://github.com/ExclamationLabs/connector-sympa/blob/main/src/main/resources/sympa-config-example.properties 

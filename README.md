@@ -31,14 +31,12 @@ following operations:
 
 ## Midpoint Configuration
 
-- Copy the compiled connector jar file to the *icf-connectors* subdirectory of your Midpoint instance. This is the 
-connector library folder.
+- Copy the compiled connector jar file to the *icf-connectors* subdirectory of your Midpoint instance. This is the connector library folder.
 
 - Restart midPoint. 
 
-- Within Midpoint create a resource type definition for each Sympa Instance you want to control. Each instance will 
-  need its onw resource configuration file. Make sure to set the fully qualified file location of the configuration file. 
-  
+- Within Midpoint create a resource type definition for each Sympa Instance you want to control. Each instance will need its onw resource configuration file. Make sure to set the fully qualified file location of the configuration file.
+
 
 ##Configuration Properties
 

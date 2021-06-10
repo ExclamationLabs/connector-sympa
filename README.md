@@ -59,3 +59,4 @@ for an example configuration file.
 - **sympa.domain.wsdl** is the url of the Sympa server's WSDL file. This url should contain the same fully qualified 
   host name as the **sympa.domain.url** property  
 
+- **CONNECTOR_BASE_CONFIGURATION_ACTIVE** This configuration item originates from the base connector and should tbe set to Y

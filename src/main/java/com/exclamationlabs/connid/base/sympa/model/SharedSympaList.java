@@ -67,6 +67,17 @@ public class SharedSympaList implements IdentityModel
      */
     public String getDomain()
     {
+        if ( domain == null || domain.length() == 0 )
+        {
+            if ( listAddress != null && listAddress.length() > 0 )
+            {
+                int at = listAddress.indexOf("@");
+                if ( at > 0 )
+                {
+                    listName = listAddress.substring(at+1);
+                }
+            }
+        }
         return domain;
     }
 
@@ -90,7 +101,7 @@ public class SharedSympaList implements IdentityModel
     @Override
     public String getIdentityNameValue()
     {
-        return getSubject();
+        return getListName();
     }
 
     /**
@@ -109,6 +120,17 @@ public class SharedSympaList implements IdentityModel
      */
     public String getListName()
     {
+        if ( listName == null || listName.length() == 0 )
+        {
+            if ( listAddress != null && listAddress.length() > 0 )
+            {
+                int at = listAddress.indexOf("@");
+                if ( at > 0 )
+                {
+                    listName = listAddress.substring(0, at);
+                }
+            }
+        }
         return listName;
     }
 
@@ -122,7 +144,7 @@ public class SharedSympaList implements IdentityModel
 
     /**
      * Set the domain property
-     * @param domain
+     * @param domain the mail domain
      */
     public void setDomain(String domain)
     {
@@ -153,17 +175,17 @@ public class SharedSympaList implements IdentityModel
 
     /**
      * Set the listName property
-     * @param listName
+     * @param name The name of the list
      */
-    public void setListName(String listName)
+    public void setListName(String name)
     {
-        this.listName = listName;
+        this.listName = name;
     }
 
     /**
      * Gets the value of the subject property.
      *
-     * @return
+     * @param subject
      *     possible object is
      *     {@link String }
      *
@@ -178,7 +200,7 @@ public class SharedSympaList implements IdentityModel
     public String toString()
     {
         return "SharedSympaList{" +
-                "listAddress='" + listAddress + '\'' +
+                "listAddress='" + getListAddress() + '\'' +
                 ", homepage='" + homePage + '\'' +
                 ", subject='" + subject + '\'' +
                 '}';

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<xsd:schema elementFormDefault="qualified"
+  targetNamespace="http://sympa.internet2.edu"
+  xmlns:tns="http://grouper-demo.tier.internet2.edu"
+  xmlns:a="http://prism.evolveum.com/xml/ns/public/annotation-3"
+  xmlns:c="http://midpoint.evolveum.com/xml/ns/public/common/common-3"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <!-- Extended fields for a midpoint OrgType to support SYMPA Mailing List Server attributes
+         Place this file in your MIDPOINT_HOME/schema directory and restart your midpoint server
+    -->
+    <xsd:complexType name="OrgExtensionType">
+    <xsd:annotation>
+      <xsd:appinfo>
+        <a:extension ref="c:OrgType"/>
+      </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:sequence>
+        <xsd:element name="subject" type="xsd:string" minOccurs="0">
+        	<xsd:annotation>
+				<xsd:appinfo>
+					<a:indexed>true</a:indexed>
+					<a:displayName>Subject</a:displayName>
+					<a:help>Typically used as a mailing list subject</a:help>
+				</xsd:appinfo>
+            </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="template" type="xsd:string" minOccurs="0">
+        	<xsd:annotation>
+				<xsd:appinfo>
+					<a:indexed>true</a:indexed>
+					<a:displayName>Template</a:displayName>
+					<a:help>Typically used as a mailing list template for construction</a:help>
+				</xsd:appinfo>
+            </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="topic" type="xsd:string" minOccurs="0">
+            <xsd:annotation>
+				<xsd:appinfo>
+					<a:indexed>true</a:indexed>
+					<a:displayName>Topics</a:displayName>
+					<a:help>Typically used to describes the topics covered by the item</a:help>
+				</xsd:appinfo>
+            </xsd:annotation>
+        </xsd:element>
+        <xsd:element name="homepage" type="xsd:string" minOccurs="0">
+            <xsd:annotation>
+                <xsd:appinfo>
+                    <a:indexed>true</a:indexed>
+                    <a:displayName>Home Page</a:displayName>
+                    <a:help>The URL location of the Homepage</a:help>
+   				</xsd:appinfo>
+            </xsd:annotation>
+        </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
+

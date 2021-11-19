@@ -75,9 +75,12 @@ public class SympaDriver extends BaseDriver
     public void test() throws ConnectorException
     {
         // Test basic connectivity to Sympa by trying to get a dummy list that doesn't exist
-        try {
+        try
+        {
             getSympaCore().getOne("dummyList");
-        } catch (UnknownUidException unk) {
+        }
+        catch (UnknownUidException unk)
+        {
             // expected exception - there should be no dummyList
         }
     }

@@ -20,12 +20,8 @@ public class SharedSympaList implements IdentityModel
 {
 
     private String homePage;
-
-
     private String subject;
-
     private String listAddress;
-
     private String listName;
     private String domain;
     private String description;
@@ -74,7 +70,7 @@ public class SharedSympaList implements IdentityModel
                 int at = listAddress.indexOf("@");
                 if ( at > 0 )
                 {
-                    listName = listAddress.substring(at+1);
+                    domain = listAddress.substring(at+1);
                 }
             }
         }

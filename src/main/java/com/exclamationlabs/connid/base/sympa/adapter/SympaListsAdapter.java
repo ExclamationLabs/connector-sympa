@@ -42,16 +42,14 @@ public class SympaListsAdapter extends BaseAdapter<SharedSympaList> {
     @Override
     public List<ConnectorAttribute> getConnectorAttributes() {
         List<ConnectorAttribute> result = new ArrayList<>();
-        result.add(new ConnectorAttribute(HOMEPAGE.name(), STRING));
+        result.add(new ConnectorAttribute(HOMEPAGE.name(), STRING, NOT_UPDATEABLE));
         result.add(new ConnectorAttribute(SUBJECT.name(), STRING));
         result.add(new ConnectorAttribute(LIST_ADDRESS.name(), STRING, NOT_UPDATEABLE));
         result.add(new ConnectorAttribute(LIST_NAME.name(), STRING));
         result.add(new ConnectorAttribute(DESCRIPTION.name(), STRING));
         result.add(new ConnectorAttribute(TEMPLATE.name(), STRING));
         result.add(new ConnectorAttribute(TOPICS.name(), STRING));
-        result.add(new ConnectorAttribute(DOMAIN.name(), STRING));
-        result.add(new ConnectorAttribute(IS_SUBSCRIBER.name(), BOOLEAN));
-        result.add(new ConnectorAttribute(IS_OWNER.name(), BOOLEAN));
+        result.add(new ConnectorAttribute(DOMAIN.name(), STRING, NOT_UPDATEABLE));
         return result;
     }
 

@@ -747,10 +747,10 @@ public class SympaCore
         if (obj instanceof SympaFault) {
             SympaFault fault = (SympaFault) obj;
             if (listName != null) {
-                LOG.warn("Failed to complete Sympa request {0} for list {1}. Fault info: {2}.",
+                LOG.info("Failed to complete Sympa request {0} for list {1}. Fault info: {2}.",
                         request, listName, fault.toString());
             } else {
-                LOG.warn("Failed to complete Sympa request {0}. Fault info: {1}.",
+                LOG.info("Failed to complete Sympa request {0}. Fault info: {1}.",
                         request, fault.toString());
             }
             processFault(request, listName, fault);

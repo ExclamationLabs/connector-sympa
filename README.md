@@ -38,7 +38,7 @@ The connector supports the management of Mailing List owners, moderators, and su
 * Copy the compiled connector jar file to the _icf-connectors_ subdirectory of your Midpoint instance. This is the connector library folder.
 * Restart midPoint.
 * Within Midpoint, create a resource type definition for each SYMPA Instance you want to control. Each instance will need its own resource configuration.
-* We have included a schema extension to support mapping of SYMPA attributes to Midpoint Organizations
+* We have included an example [schema extension](https://github.com/ExclamationLabs/connector-sympa/blob/main/artifacts/schema/sympa_org_extension.xsd) to support mapping of SYMPA attributes to Midpoint Organizations
 
 
 # 4	SYMPA Setup
@@ -166,6 +166,18 @@ The connector schema consists of the following attributes.
    <td>No
    </td>
    <td>The server’s mail domain. Returned on Create or Get requests
+   </td>
+  </tr>
+  <tr>
+   <td>HOMEPAGE
+   </td>
+   <td>Yes
+   </td>
+   <td>No
+   </td>
+   <td>No
+   </td>
+   <td>The lists home page URL. Returned on Create or Get requests
    </td>
   </tr>
 </table>

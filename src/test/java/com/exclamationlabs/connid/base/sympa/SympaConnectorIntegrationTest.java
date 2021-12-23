@@ -88,12 +88,13 @@ public class SympaConnectorIntegrationTest extends IntegrationTest {
     @Test
     public void test120UserModify() {
         // NOTE: Sympa update is a no-op, but should still be allowed without failure
-        Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(SympaListAttribute.SUBJECT.name()).addValue("Modified Subject").build());
+        Set<AttributeDelta> attributes = new HashSet<>();
+        attributes.add(new AttributeDeltaBuilder().setName(SympaListAttribute.SUBJECT.name()).
+                addValueToReplace("Modified Subject").build());
 
-        Uid newId = connector.update(new ObjectClass("List"), new Uid(TEST_LIST_NAME), attributes, new OperationOptionsBuilder().build());
-        assertNotNull(newId);
-        assertNotNull(newId.getUidValue());
+        Set<AttributeDelta> response = connector.updateDelta(new ObjectClass("List"), new Uid(TEST_LIST_NAME), attributes, new OperationOptionsBuilder().build());
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
 
     @Test

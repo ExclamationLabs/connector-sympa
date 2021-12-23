@@ -201,4 +201,14 @@ public class SharedSympaList implements IdentityModel
                 ", subject='" + subject + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object input) {
+        return identityEquals(SharedSympaList.class, this, input);
+    }
+
+    @Override
+    public int hashCode() {
+        return identityHashCode();
+    }
 }

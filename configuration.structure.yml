@@ -1,0 +1,31 @@
+---
+name: 'Sympa'
+configurationClass:
+  name: 'SympaConfiguration'
+  package: 'com.exclamationlabs.connid.base.sympa.configuration'
+custom:
+  items:
+    required:
+      appName:
+        type: String
+        displayText: 'appName.display'
+        helpText: 'appName.help'
+      appPassword:
+        type: String
+        displayText: 'appPassword.display'
+        helpText: 'appPassword.help'
+      listMaster:
+        type: String
+        displayText: 'listMaster.display'
+        helpText: 'listMaster.help'
+      sympaDomainWSDL:
+        type: String
+        displayText: 'sympaWSDL.display'
+        helpText: 'sympaWSDL.help'
+      sympaDomainURL:
+        type: String
+        displayText: 'sympaURL.display'
+        helpText: 'sympaURL.help'
+
+
+

@@ -14,8 +14,6 @@
 package com.exclamationlabs.connid.base.sympa.driver;
 
 import com.exclamationlabs.connid.base.connector.authenticator.Authenticator;
-import com.exclamationlabs.connid.base.connector.configuration.BaseConnectorConfiguration;
-import com.exclamationlabs.connid.base.connector.configuration.ConnectorProperty;
 import com.exclamationlabs.connid.base.connector.configuration.TrustStoreConfiguration;
 import com.exclamationlabs.connid.base.connector.driver.BaseDriver;
 import com.exclamationlabs.connid.base.sympa.configuration.SympaConfiguration;
@@ -23,12 +21,12 @@ import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.exceptions.UnknownUidException;
 
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
-public class SympaDriver extends BaseDriver
+public class SympaDriver extends BaseDriver<SympaConfiguration>
 {
     private SympaCore sympaCore;
-    private SympaConfiguration sympaConfiguration;
 
     public SympaDriver()
     {
@@ -42,28 +40,16 @@ public class SympaDriver extends BaseDriver
 
     }
 
-    @Override
-    public Set<ConnectorProperty> getRequiredPropertyNames()
-    {
-        return null;
-    }
-
-    SympaConfiguration getSympaConfiguration()
-    {
-        return sympaConfiguration;
-    }
-
     public SympaCore getSympaCore()
     {
         return sympaCore;
     }
 
     @Override
-    public void initialize(BaseConnectorConfiguration baseConnectorConfiguration, Authenticator authenticator) throws ConnectorException
+    public void initialize(SympaConfiguration configuration, Authenticator authenticator) throws ConnectorException
     {
         TrustStoreConfiguration.clearJdkProperties();
-        sympaConfiguration = (SympaConfiguration) baseConnectorConfiguration;
-        sympaCore = new SympaCore(sympaConfiguration.getSympaPropertyMap());
+        sympaCore = new SympaCore(getSympaPropertyMap(configuration));
     }
 
     public void setSympaCore(SympaCore sympaCore)
@@ -83,5 +69,20 @@ public class SympaDriver extends BaseDriver
         {
             // expected exception - there should be no dummyList
         }
+    }
+
+    /**
+     * Collect all the Configuration properties
+     * @return Map containing all the configuration properties
+     */
+    public Map<String, String> getSympaPropertyMap(SympaConfiguration configuration)
+    {
+        Map<String, String> propertyMap = new HashMap<>();
+        propertyMap.put("app.name", configuration.getAppName());
+        propertyMap.put("app.password", configuration.getAppPassword());
+        propertyMap.put("list.master", configuration.getListMaster());
+        propertyMap.put("sympa.domain.wsdl", configuration.getSympaDomainWSDL());
+        propertyMap.put("sympa.domain.url", configuration.getSympaDomainURL());
+        return propertyMap;
     }
 }

@@ -21,9 +21,10 @@ import org.identityconnectors.framework.spi.ConnectorClass;
 
 @ConnectorClass(displayNameKey = "sympa.connector.display",
         configurationClass = SympaConfiguration.class)
-public class SympaConnector extends BaseFullAccessConnector {
+public class SympaConnector extends BaseFullAccessConnector<SympaConfiguration> {
 
     public SympaConnector() {
+        super(SympaConfiguration.class);
         setDriver(new SympaDriver());
         setAdapters(new SympaListsAdapter());
     }

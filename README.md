@@ -58,13 +58,11 @@ The following configuration properties are necessary for the connector to operat
 
 
 
-* **app.name** is the trusted application name specified in the target SYMPA server's trusted_applications.conf file.
-* **app.password** is the trusted application password specified by the SYMPA server's administrator and whose md5 hash is stored in the trusted_applications.conf file.
-* **list.master** is the email address of the list master who is permitted to perform operations executed by the connector. The SYMPA administrator should grant the necessary permissions to the email address specified here.
-* **sympa.domain.url** is the url of the SYMPA Service you which to control. This url endpoint is typically specified as the port location in the service WSDL.
-* **sympa.domain.wsdl** is the url of the SYMPA server's WSDL file. This url should contain the same fully qualified host name as the sympa.domain.url property
-* **CONNECTOR_BASE_CONFIGURATION_ACTIVE** This configuration item originates from the base connector and should be set to Y. This value is required when you use a configuration file and set automatically when you use the Resource Configuration page.
-
+* **custom.appName** is the trusted application name specified in the target SYMPA server's trusted_applications.conf file.
+* **custom.appPassword** is the trusted application password specified by the SYMPA server's administrator and whose md5 hash is stored in the trusted_applications.conf file.
+* **custom.listMaster** is the email address of the list master who is permitted to perform operations executed by the connector. The SYMPA administrator should grant the necessary permissions to the email address specified here.
+* **custom.sympaDomainURL** is the url of the SYMPA Service you which to control. This url endpoint is typically specified as the port location in the service WSDL.
+* **custom.sympaDomainWSDL** is the url of the SYMPA server's WSDL file. This url should contain the same fully qualified host name as the sympa.domain.url property
 
 # 6	Connector Schema
 

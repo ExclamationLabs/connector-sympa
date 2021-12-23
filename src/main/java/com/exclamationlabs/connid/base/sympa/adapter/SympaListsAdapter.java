@@ -14,13 +14,13 @@ package com.exclamationlabs.connid.base.sympa.adapter;
 import com.exclamationlabs.connid.base.connector.adapter.AdapterValueTypeConverter;
 import com.exclamationlabs.connid.base.connector.adapter.BaseAdapter;
 import com.exclamationlabs.connid.base.connector.attribute.ConnectorAttribute;
+import com.exclamationlabs.connid.base.sympa.configuration.SympaConfiguration;
 import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
 import org.identityconnectors.framework.common.objects.Attribute;
 import org.identityconnectors.framework.common.objects.AttributeBuilder;
 import org.identityconnectors.framework.common.objects.ObjectClass;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 
 import static com.exclamationlabs.connid.base.connector.attribute.ConnectorAttributeDataType.*;
@@ -28,7 +28,7 @@ import static org.identityconnectors.framework.common.objects.AttributeInfo.Flag
 
 import static com.exclamationlabs.connid.base.sympa.attribute.SympaListAttribute.*;
 
-public class SympaListsAdapter extends BaseAdapter<SharedSympaList> {
+public class SympaListsAdapter extends BaseAdapter<SharedSympaList, SympaConfiguration> {
     @Override
     public ObjectClass getType() {
         return new ObjectClass("List");
@@ -40,8 +40,8 @@ public class SympaListsAdapter extends BaseAdapter<SharedSympaList> {
     }
 
     @Override
-    public List<ConnectorAttribute> getConnectorAttributes() {
-        List<ConnectorAttribute> result = new ArrayList<>();
+    public Set<ConnectorAttribute> getConnectorAttributes() {
+        Set<ConnectorAttribute> result = new HashSet<>();
         result.add(new ConnectorAttribute(HOMEPAGE.name(), STRING, NOT_UPDATEABLE));
         result.add(new ConnectorAttribute(SUBJECT.name(), STRING));
         result.add(new ConnectorAttribute(LIST_ADDRESS.name(), STRING, NOT_UPDATEABLE));
@@ -54,8 +54,8 @@ public class SympaListsAdapter extends BaseAdapter<SharedSympaList> {
     }
 
     @Override
-    protected List<Attribute> constructAttributes(SharedSympaList sympaList) {
-        List<Attribute> attributes = new ArrayList<>();
+    protected Set<Attribute> constructAttributes(SharedSympaList sympaList) {
+        Set<Attribute> attributes = new HashSet<>();
         attributes.add(AttributeBuilder.build(HOMEPAGE.name(), sympaList.getHomePage()));
         attributes.add(AttributeBuilder.build(SUBJECT.name(), sympaList.getSubject()));
         attributes.add(AttributeBuilder.build(LIST_ADDRESS.name(), sympaList.getListAddress()));
@@ -68,7 +68,8 @@ public class SympaListsAdapter extends BaseAdapter<SharedSympaList> {
     }
 
     @Override
-    protected SharedSympaList constructModel(Set<Attribute> attributes, boolean isCreation) {
+    protected SharedSympaList constructModel(Set<Attribute> attributes, Set<Attribute> multiValueAdd,
+                                             Set<Attribute> multiValueRemove, boolean isCreation) {
         SharedSympaList list = new SharedSympaList();
         list.setTemplate(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, TEMPLATE));
         list.setTopics(AdapterValueTypeConverter.getSingleAttributeValue(String.class, attributes, TOPICS));

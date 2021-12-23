@@ -14,15 +14,15 @@
 package com.exclamationlabs.connid.base.sympa.driver;
 
 import com.exclamationlabs.connid.base.connector.driver.DriverInvocator;
+import com.exclamationlabs.connid.base.connector.results.ResultsFilter;
+import com.exclamationlabs.connid.base.connector.results.ResultsPaginator;
 import com.exclamationlabs.connid.base.sympa.model.SharedSympaList;
 import com.exclamationlabs.connid.base.sympa.model.SympaCoreList;
 import org.identityconnectors.common.logging.Log;
 import org.identityconnectors.framework.common.exceptions.ConnectorException;
 import org.identityconnectors.framework.common.exceptions.UnknownUidException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSympaList> 
 {
@@ -100,9 +100,10 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
      * @throws ConnectorException
      */
     @Override
-    public List<SharedSympaList> getAll(SympaDriver sympaDriver, Map<String, Object> map) throws ConnectorException 
+    public Set<SharedSympaList> getAll(SympaDriver sympaDriver, ResultsFilter filter,
+                                       ResultsPaginator paginator, Integer max) throws ConnectorException
     {
-        List<SharedSympaList> sharedLists = null;
+        Set<SharedSympaList> sharedLists = null;
         SympaCore sympaCore = sympaDriver.getSympaCore();
         if ( sympaCore != null )
         {
@@ -110,7 +111,7 @@ public class SympaListInvocator implements DriverInvocator<SympaDriver, SharedSy
             if ( lists != null && lists.size() > 0 )
             {
                 SharedSympaList sharedList = null;
-                sharedLists = new ArrayList<>();
+                sharedLists = new HashSet<>();
                 for (SympaCoreList coreList: lists )
                 {
                     sharedList = new SharedSympaList();

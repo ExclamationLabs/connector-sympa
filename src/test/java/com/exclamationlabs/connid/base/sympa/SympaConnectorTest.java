@@ -56,12 +56,11 @@ public class SympaConnectorTest {
             }
         };
         SympaConfiguration configuration = new SympaConfiguration();
-        configuration.setTestConfiguration();
-        configuration.setProperty("app.name", "test");
-        configuration.setProperty("app.password", "test");
-        configuration.setProperty("list.master", "test");
-        configuration.setProperty("sympa.domain.wsdl", "test");
-        configuration.setProperty("sympa.domain.url", "test");
+        configuration.setAppName("test");
+        configuration.setAppPassword("test");
+        configuration.setListMaster("test");
+        configuration.setSympaDomainURL("test");
+        configuration.setSympaDomainWSDL("test");
         connector.init(configuration);
     }
 
@@ -87,12 +86,13 @@ public class SympaConnectorTest {
     @Test
     public void test120ListModify() {
         // NOTE: Sympa update is a no-op, but should still be allowed without failure
-        Set<Attribute> attributes = new HashSet<>();
-        attributes.add(new AttributeBuilder().setName(SympaListAttribute.SUBJECT.name()).addValue("Modified Subject").build());
+        Set<AttributeDelta> attributes = new HashSet<>();
+        attributes.add(new AttributeDeltaBuilder().setName(SympaListAttribute.SUBJECT.name()).
+                addValueToReplace("Modified Subject").build());
 
-        Uid newId = connector.update(new ObjectClass("List"), new Uid("testList"), attributes, new OperationOptionsBuilder().build());
-        assertNotNull(newId);
-        assertNotNull(newId.getUidValue());
+        Set<AttributeDelta> response = connector.updateDelta(new ObjectClass("List"), new Uid("testList"), attributes, new OperationOptionsBuilder().build());
+        assertNotNull(response);
+        assertTrue(response.isEmpty());
     }
     @Test
     public void test130ListsGet() {

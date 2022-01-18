@@ -41,6 +41,8 @@ project.version="${project_version}-${build_version}"
 
 def versionNumber = "${project_version}"
 
+group = 'com.exclamationlabs.connid'
+
 dependencies {
     // Required for MidPoint runtime
     runtimeOnly 'org.codehaus.groovy:groovy:2.5.2'
